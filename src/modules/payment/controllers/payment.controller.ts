@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 
 @Controller('payment')
-export class PaymentController {}
+export class PaymentController {
+  @UseGuards(AuthGuard)
+  @Post()
+  checkout() {
+    console.log('Oi');
+  }
+}
