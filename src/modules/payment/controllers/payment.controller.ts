@@ -1,13 +1,14 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
-import Stripe from 'stripe';
+import { ProductDto } from 'src/modules/product/dtos/product.dto';
+import { PaymentService } from '../services/payment.service';
 
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly stripe: Stripe) {}
+  constructor(private readonly paymentService: PaymentService) {}
   @UseGuards(AuthGuard)
   @Post()
-  checkout() {
-    console.log('Oi');
+  checkout(@Body() body: ProductDto) {
+    return this.paymentService.checkout(body.name);
   }
 }

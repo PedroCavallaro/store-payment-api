@@ -2,10 +2,10 @@ import { Global, Module, Provider } from '@nestjs/common';
 import { DbService } from './db.service';
 import { Pool } from 'pg';
 import {
-  DB_DATABASE,
-  DB_HOST,
-  DB_PASSWORD,
   DB_USER,
+  DB_HOST,
+  DB_DATABASE,
+  DB_PASSWORD,
 } from 'constants/constants';
 
 const dbProvider: Provider = {
