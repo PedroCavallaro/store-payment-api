@@ -9,6 +9,6 @@ export class PaymentController {
   @UseGuards(AuthGuard)
   @Post()
   checkout(@Body() body: ProductDto) {
-    return this.paymentService.checkout(body.name);
+    return this.paymentService.checkout(body);
   }
 }

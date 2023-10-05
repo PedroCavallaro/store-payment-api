@@ -7,7 +7,13 @@ import { StripeModule } from './stripe/stripe.module';
 import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
-import { MAIL_HOST, MAILER_USER, MAILER_PASSWORD } from 'constants/constants';
+import {
+  MAIL_HOST,
+  MAILER_USER,
+  MAILER_PASSWORD,
+  STRIPE_API_KEY_PUBLIC,
+  STRIPE_SECRET_KEY,
+} from 'constants/constants';
 
 @Module({
   imports: [
@@ -15,7 +21,9 @@ import { MAIL_HOST, MAILER_USER, MAILER_PASSWORD } from 'constants/constants';
     ProductModule,
     AuthModule,
     DbModule,
-    StripeModule,
+    StripeModule.forRoot(STRIPE_SECRET_KEY, {
+      apiVersion: '2023-08-16',
+    }),
     PaymentModule,
     BullModule.forRoot({
       redis: {
