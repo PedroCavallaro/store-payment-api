@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 export class StripeModule {
   static forRoot(apiKey: string, config: Stripe.StripeConfig): DynamicModule {
     const stripe = new Stripe(apiKey, config);
+
     const stripeProvider: Provider = {
       provide: Stripe,
       useValue: stripe,

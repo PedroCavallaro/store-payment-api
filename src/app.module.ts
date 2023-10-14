@@ -11,7 +11,6 @@ import {
   MAIL_HOST,
   MAILER_USER,
   MAILER_PASSWORD,
-  STRIPE_API_KEY_PUBLIC,
   STRIPE_SECRET_KEY,
 } from 'constants/constants';
 
