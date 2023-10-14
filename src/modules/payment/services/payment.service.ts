@@ -11,23 +11,8 @@ export class PaymentService {
     private readonly stripe: Stripe,
   ) {}
 
-  async checkout(product: Checkout) {
-    console.log(product.payment_method_id);
-    let intent = null;
-    if (product.payment_method_id) {
-      intent = await this.stripe.paymentIntents.create({
-        payment_method: product.payment_method_id,
-        amount: 1 * 100,
-        currency: 'brl',
-        confirmation_method: 'manual',
-        confirm: true,
-        payment_method_types: ['card'],
-        return_url: 'http://localhost:3000',
-      });
-      return this.generateResponse(intent);
-    } else {
-      await this.paymentsQueue.add('validate-payment', product);
-    }
+  async checkout(checkout: Checkout) {
+    await this.paymentsQueue.add('validate-payment', checkout);
   }
   generateResponse = (intent) => {
     if (

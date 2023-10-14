@@ -10,20 +10,44 @@ import { DbService } from 'src/database/db.service';
 export class PaymentValidationConsumer {
   constructor(
     private readonly mailService: MailerService,
+    private readonly dbService: DbService,
     private readonly stripe: Stripe,
   ) {}
   @Process('validate-payment')
-  async validatePaymetJob(job: Job<Checkout>, dbService: DbService) {
+  async validatePaymetJob(job: Job<Checkout>) {
     const { data } = job;
 
+    const orderSql = `INSERT INTO ORDERS(TOTAL_AMOUNT, PAYMENT_STATUS) VALUES(
+      $1,
+      $2
+    )
+    RETURNING
+        id`;
     try {
       let intent = null;
-      if (data.payment_intent_id) {
-        intent = await this.stripe.paymentIntents.confirm(
-          data.payment_method_id,
-        );
+      if (data.payment_method_id) {
+        intent = await this.stripe.paymentIntents.create({
+          payment_method: data.payment_method_id,
+          amount: data.totalAmount * 100,
+          currency: 'brl',
+          confirmation_method: 'manual',
+          confirm: true,
+          payment_method_types: ['card'],
+          return_url: 'http://localhost:3000',
+        });
 
         if (intent.status === 'succeeded') {
+          const { rows } = await this.dbService.query(orderSql, [
+            data.totalAmount,
+            true,
+          ]);
+
+          data.products.forEach(async ({ productId, amount }) => {
+            await this.dbService.query(
+              `INSERT INTO ORDER_ITENS(ORDER_ID, PRODUCT_ID, AMOUNT) VALUES(${rows[0].id}, ${productId}, ${amount})`,
+            );
+          });
+
           await this.mailService.sendMail({
             to: `${data.email}`,
             from: 'Loja Ficticia <loja@email.com>',

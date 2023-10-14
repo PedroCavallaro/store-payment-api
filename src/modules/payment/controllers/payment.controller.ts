@@ -6,7 +6,7 @@ import { PaymentService } from '../services/payment.service';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Post()
   checkout(@Body() body: any) {
     return this.paymentService.checkout(body);
